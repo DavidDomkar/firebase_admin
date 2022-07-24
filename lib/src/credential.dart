@@ -15,6 +15,8 @@ void setApplicationDefaultCredential(Credential? credential) {
 class Credentials {
   static Credential? _globalAppDefaultCred;
 
+  static final _env = DotEnv(includePlatformEnvironment: true)..load();
+
   static Future<void> logout() async {
     var f = File(firebaseAdminCredentialPath!);
     await f.delete();
@@ -122,12 +124,12 @@ class Credentials {
   static String? get _configDir {
     // Windows has a dedicated low-rights location for apps at ~/Application Data
     if (Platform.isWindows) {
-      return env['APPDATA'];
+      return _env['APPDATA'];
     }
 
     // On *nix the gcloud cli creates a . dir.
-    if (env.containsKey('HOME')) {
-      return path.join(env['HOME']!, '.config');
+    if (_env.isDefined('HOME')) {
+      return path.join(_env['HOME']!, '.config');
     }
     return null;
   }
@@ -137,8 +139,8 @@ class Credentials {
     if (f.existsSync()) {
       return _credentialFromFile(f.path);
     }
-    if (env['GOOGLE_APPLICATION_CREDENTIALS'] != null) {
-      return _credentialFromFile(env['GOOGLE_APPLICATION_CREDENTIALS']!);
+    if (_env['GOOGLE_APPLICATION_CREDENTIALS'] != null) {
+      return _credentialFromFile(_env['GOOGLE_APPLICATION_CREDENTIALS']!);
     }
 
     if (firebaseAdminCredentialPath != null) {

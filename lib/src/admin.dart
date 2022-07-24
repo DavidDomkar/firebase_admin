@@ -17,6 +17,8 @@ class FirebaseAdmin {
 
   static final FirebaseAdmin instance = FirebaseAdmin._();
 
+  static final _env = DotEnv(includePlatformEnvironment: true)..load();
+
   static const String defaultAppName = '[DEFAULT]';
   static const String firebaseConfigVar = 'FIREBASE_CONFIG';
 
@@ -119,7 +121,7 @@ class FirebaseAdmin {
   /// If the environment variable contains a string that starts with '{' it will
   /// be parsed as JSON, otherwise it will be assumed to be pointing to a file.
   AppOptions _loadOptionsFromEnvVar(Credential? credential) {
-    final config = env[firebaseConfigVar];
+    final config = _env[firebaseConfigVar];
     if (config == null || config.isEmpty) {
       return AppOptions(credential: credential!);
     }
